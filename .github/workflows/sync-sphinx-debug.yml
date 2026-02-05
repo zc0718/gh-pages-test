@@ -15,7 +15,7 @@ jobs:
           mkdir -p "$HOME/.ssh"
           echo "$TEST_REPO_SYNC" > "$HOME/.ssh/id_ed25519"
           chmod 600 "$HOME/.ssh/id_ed25519"
-          ssh-keygen github.com >> "$HOME/.ssh/known_hosts"
+          ssh-keyscan github.com >> "$HOME/.ssh/known_hosts"
           
           ssh-keygen -lf "$HOME/.ssh/id_ed25519"
 
