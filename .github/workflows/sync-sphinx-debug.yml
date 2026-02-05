@@ -6,6 +6,9 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout AA repo
         uses: actions/checkout@v4
