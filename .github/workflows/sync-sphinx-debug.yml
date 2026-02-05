@@ -12,15 +12,15 @@ jobs:
 
       - name: Setup SSH for AA
         run: |
-          mkdir "$HOME/.ssh"
-          echo "$test_repo_sync" > "$HOME/.ssh/id_ed25519"
+          mkdir -p "$HOME/.ssh"
+          echo "$TEST_REPO_SYNC" > "$HOME/.ssh/id_ed25519"
           chmod 600 "$HOME/.ssh/id_ed25519"
           ssh-keygen github.com >> "$HOME/.ssh/known_hosts"
           
           ssh-keygen -lf "$HOME/.ssh/id_ed25519"
 
         env:
-          test_repo_sync: ${{ secrets.test_repo_sync }}
+          TEST_REPO_SYNC: ${{ secrets.test_repo_sync }}
 
       - name: Clone AA and copy docs/sphinx/
         run: |
