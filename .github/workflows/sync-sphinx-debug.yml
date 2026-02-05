@@ -1,0 +1,36 @@
+name: Debug Sync Sphinx
+
+on:
+  workflow_dispatch
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout AA repo
+        uses: actions/checkout@v4
+
+      - name: Setup SSH for AA
+        run: |
+          mkdir -p "$HOME/.ssh"
+          echo "$test_repo_sync" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          ssh-keygen github.com >> "$HOME/.ssh/known_hosts"
+          
+          ssh-keygen -lf "$HOME/.ssh/id_ed25519"
+
+        env:
+          test_repo_sync: ${{ secrets.test_repo_sync }}
+
+      - name: Clone AA and copy docs/sphinx/
+        run: |
+          git clone --depth=1 git@github.com:zc0718/.test.git cache-tmp
+          ls -la cache-tmp/docs/
+          mkdir -p .docs/
+          rsync -av -delete cache-tmp/docs/sphinx/ ./docs/sphinx
+          rm -rf cache-tmp
+
+      - name: Show changes
+        run: |
+          git status
+          git diff --staged || echo "No staged changes."
