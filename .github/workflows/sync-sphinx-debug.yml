@@ -26,7 +26,7 @@ jobs:
         run: |
           git clone --depth=1 git@github.com:zc0718/.test.git cache-tmp
           ls -la cache-tmp/docs/
-          mkdir -p .docs/
+          mkdir -p ./docs/
           rsync -av -delete cache-tmp/docs/sphinx/ ./docs/sphinx
           rm -rf cache-tmp
 
