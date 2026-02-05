@@ -47,6 +47,6 @@ jobs:
             git commit -m "chore: debug sync docs/sphinx from AA"
             git push
             echo "Changes pushed!"
-          else:
+          else
             echo "No changes detected."
           fi
