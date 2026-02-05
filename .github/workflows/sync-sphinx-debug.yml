@@ -26,11 +26,24 @@ jobs:
         run: |
           git clone --depth=1 git@github.com:zc0718/.test.git cache-tmp
           ls -la cache-tmp/docs/
-          mkdir -p ./docs/
-          rsync -av -delete cache-tmp/docs/sphinx/ ./docs/sphinx
+          mkdir -p docs/
+          rsync -av -delete cache-tmp/docs/sphinx/ docs/sphinx
           rm -rf cache-tmp
 
       - name: Show changes
         run: |
           git status
           git diff --staged || echo "No staged changes."
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@user.noreply.github.com"
+          git add .
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: debug sync docs/sphinx from AA"
+            git push
+            echo "Changes pushed!"
+          else:
+            echo "No changes detected."
+          fi
