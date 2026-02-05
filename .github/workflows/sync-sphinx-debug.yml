@@ -12,7 +12,7 @@ jobs:
 
       - name: Setup SSH for AA
         run: |
-          mkdir -p "$HOME/.ssh"
+          mkdir "$HOME/.ssh"
           echo "$test_repo_sync" > "$HOME/.ssh/id_ed25519"
           chmod 600 "$HOME/.ssh/id_ed25519"
           ssh-keygen github.com >> "$HOME/.ssh/known_hosts"
