@@ -23,7 +23,7 @@ jobs:
           ssh-keygen -lf "$HOME/.ssh/id_ed25519"
 
         env:
-          TEST_REPO_SYNC: ${{ secrets.test_repo_sync }}
+          TEST_REPO_SYNC: ${{ secrets.TEST_REPO_SYNC }}
 
       - name: Clone AA and copy docs/sphinx/
         run: |
