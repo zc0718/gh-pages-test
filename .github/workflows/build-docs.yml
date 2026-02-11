@@ -141,14 +141,16 @@ jobs:
           echo "Final docs structure:"
           find docs -type f | sort
 
-      - name: Commit and push
+      - name: Commit and push to gh-pages
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin
+          git checkout -b gh-pages
           git add docs/
           if ! git diff --staged --quiet; then
-            git commit -m "build: update documents hub"
-            git push
+            git commit -m "build: update docs"
+            git push origin gh-pages
           else
             echo "No changes detected."
           fi
