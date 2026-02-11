@@ -50,14 +50,41 @@ jobs:
         run: |
           git clone --depth=1 "${{ matrix.repo.url }}" cache-tmp
           ls -la cache-tmp/docs/
-          mkdir -p documentations/${{ matrix.repo.name }}/docs
-          mkdir -p documentations/${{ matrix.repo.name }}/docs/doxygen/images
-          rsync -av -delete cache-tmp/docs/sphinx/ documentations/${{ matrix.repo.name }}/docs/sphinx
-          rsync -av -delete cache-tmp/docs/images/ documentations/${{ matrix.repo.name }}/docs/images
-          mv cache-tmp/metadata.json documentations/${{ matrix.repo.name }}/metadata.json
-          mv cache-tmp/docs/build.py documentations/${{ matrix.repo.name }}/docs/build.py
-          mv cache-tmp/Doxyfile documentations/${{ matrix.repo.name }}/Doxyfile
+          mkdir -p documents/${{ matrix.repo.name }}/docs
+          mkdir -p documents/${{ matrix.repo.name }}/docs/doxygen/images
+          rsync -av -delete cache-tmp/docs/sphinx/ documents/${{ matrix.repo.name }}/docs/sphinx
+          rsync -av -delete cache-tmp/docs/images/ documents/${{ matrix.repo.name }}/docs/images
+          mv cache-tmp/metadata.json documents/${{ matrix.repo.name }}/metadata.json
+          mv cache-tmp/docs/build.py documents/${{ matrix.repo.name }}/docs/build.py
+          mv cache-tmp/Doxyfile documents/${{ matrix.repo.name }}/Doxyfile
           rm -rf cache-tmp
 
-          python documentations/${{ matrix.repo.name }}/docs/build.py
+          python documents/${{ matrix.repo.name }}/docs/build.py
 
+      - name: Upload built docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-${{ matrix.repo.name }}
+          path: documents/${{ matrix.repo.name }}
+
+
+  build-all:
+    needs: sync-and-build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: documents
+          merge-multiple: true
+
+      - name: Inspect downloaded artifacts
+        run: |
+          echo "Downloaded artifacts:"
+          find documents -type -f | head -n 20
