@@ -51,6 +51,7 @@ jobs:
           git clone --depth=1 "${{ matrix.repo.url }}" cache-tmp
           ls -la cache-tmp/docs/
           mkdir -p documentations/${{ matrix.repo.name }}/docs
+          mkdir -p documentations/${{ matrix.repo.name }}/docs/doxygen/images
           rsync -av -delete cache-tmp/docs/sphinx/ documentations/${{ matrix.repo.name }}/docs/sphinx
           rsync -av -delete cache-tmp/docs/images/ documentations/${{ matrix.repo.name }}/docs/images
           mv cache-tmp/metadata.json documentations/${{ matrix.repo.name }}/metadata.json
