@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: docs-${{ matrix.repo.name }}
-          path: documents/${{ matrix.repo.name }}
+          path: documents/${{ matrix.repo.name }}/docs/sphinx/build/html/
 
 
   build-all:
@@ -78,13 +78,58 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download all artifacts
+      - name: Download all built docs artifacts
         uses: actions/download-artifact@v4
         with:
           path: documents
           merge-multiple: true
 
-      - name: Inspect downloaded artifacts
+      - name: Create final docs directory
         run: |
-          echo "Downloaded artifacts:"
-          find documents -type -f | head -n 20
+          mkdir -p docs
+
+          for repo_html_dir in documents/*/; do
+            if [ ! -d "$repo_html_dir" ]; then continue; fi
+            repo_name=$(basename "$repo_html_dir")
+            echo "Copying $repo_name documentation..."
+            cp -r "$repo_html_dir" "docs/$repo_name"
+          done
+
+      - name: Generate main index.html
+        run: |
+          cat > docs/index.html <<'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head><title>Documentation Hub</title></head>
+          <body>
+            <h1>Project Documentation</h1>
+            <ul>
+          EOF
+
+          for d in docs/*/; do
+            name=$(basename "$d")
+            echo "  <li><a href=\"$name/\">$name</a></li>" >> docs/index.html
+          done
+
+          cat >> docs/index.html <<'EOF'
+            </ul>
+          </body>
+          </html>
+          EOF
+
+      - name: Verify final structure
+        run: |
+          echo "Final docs structure:"
+          find docs -type f | sort
+
+      - name: Commit and push
+        run: |
+          # git config user.name "github-actions[bot]"
+          # git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # git add docs/
+          # if ! git diff --staged --quiet; then
+          #   git commit -m "build: update documentation hub"
+          #   git push
+          # else
+          #   echo "No changes detected."
+          # fi 
