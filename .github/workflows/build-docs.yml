@@ -15,7 +15,7 @@ jobs:
       contents: write
 
     strategy:
-      matrix: ${{ fromJson(inputs.matrix) }}
+      matrix: ${{ fromJson(inputs.matrix.repo.name) }}
 
     steps:
       - name: Checkout
