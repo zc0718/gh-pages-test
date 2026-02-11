@@ -52,10 +52,10 @@ jobs:
           ls -la cache-tmp/docs/
           mkdir -p documentations/${{ matrix.repo.name }}/docs
           rsync -av -delete cache-tmp/docs/sphinx/ documentations/${{ matrix.repo.name }}/docs/sphinx
+          rsync -av -delete cache-tmp/docs/images/ documentations/${{ matrix.repo.name }}/docs/images
           mv cache-tmp/metadata.json documentations/${{ matrix.repo.name }}/metadata.json
           mv cache-tmp/docs/build.py documentations/${{ matrix.repo.name }}/docs/build.py
           rm -rf cache-tmp
 
           python documentations/${{ matrix.repo.name }}/docs/build.py
 
-          
