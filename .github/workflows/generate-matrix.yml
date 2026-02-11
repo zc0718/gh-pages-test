@@ -1,0 +1,51 @@
+name: Generate docs integration matrix
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['config/repos.yml']
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Generate JSON matrix dispatch
+        id: dispatch
+        run: |
+          python <<'EOF'
+          import yaml, json, os
+          from pathlib import Path
+
+          repos_path = Path('config/repos.yml')
+          config = yaml.safe_load(repos_path.read_text())
+
+          matrix = {"repo": config["repos"]}
+          print("::set-output name=matrix::" + json.dumps(matrix))
+          EOF
+      
+      - name: Trigger build workflow
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'build-docs.yml',
+              ref: 'main',
+              inputs: {
+                matrix: '${{ steps.dispatch.outputs.matrix }}'
+              }
+            })
