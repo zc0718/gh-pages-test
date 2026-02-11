@@ -2,16 +2,16 @@ name: Build docs from matrix
 
 on:
   workflow_dispatch:
-  inputs:
-    matrix:
-      description: 'JSON-encoded matrix of repos'
-      required: true
-      type: string
+    inputs:
+      matrix:
+        description: 'JSON-encoded matrix of repos'
+        required: true
+        type: string
 
 jobs:
   sync-and-build:
     runs-on: ubuntu-latest
-    premission:
+    premissions:
       contents: write
 
     strategy:

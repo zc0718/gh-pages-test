@@ -36,7 +36,8 @@ jobs:
           config = yaml.safe_load(repos_path.read_text())
 
           matrix = {"repo": config["repos"]}
-          print("::set-output name=matrix::" + json.dumps(matrix))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"matrix={json.dumps(matrix)}\n")
           EOF
       
       - name: Trigger build workflow
