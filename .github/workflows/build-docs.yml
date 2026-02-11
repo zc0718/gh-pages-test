@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.repo.name }}
-          path: documents/${{ matrix.repo.name }}/docs/sphinx/build/
+          path: documents/${{ matrix.repo.name }}/docs/sphinx/build/html/
 
 
   build-all:
@@ -82,7 +82,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: documents
-          merge-multiple: true
+          merge-multiple: false
 
       - name:  check file types Debug
         run: |
