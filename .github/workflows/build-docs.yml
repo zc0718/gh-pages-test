@@ -34,5 +34,10 @@ jobs:
           echo "Looking for secret: $SECRET_KEY"
 
           PRIVATE_KEY=$(echo "$ALL_SECRETS_JSON" | jq -r ".[\"$SECRET_KEY\"]")
-          echo "$PRIVATE_KEY"
+          mkdir -p "$HOME/.ssh"
+          echo "$PRIVATE_KEY" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          ssh-keyscan github.com >> "$HOME/.ssh/known_hosts"
+
+          ssh-keygen -lf "$HOME/.ssh/id_ed25519"
 
