@@ -114,6 +114,18 @@ jobs:
             cp -r "$repo_html_dir" "docs/$repo_name"
           done
 
+      - name: Add nojekyll
+        run: |
+          touch docs/.nojekyll
+
+      - name: check static dir
+        run: |
+          echo "Checking test1/_static:"
+          ls -la docs/test1/_static/
+          echo ""
+          echo "Checking test2/_static:"
+          ls -la docs/test2/_static/ 
+
       - name: Generate main index.html
         run: |
           cat > docs/index.html <<'EOF'
@@ -145,12 +157,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin
-          git checkout -b gh-pages
           git add docs/
           if ! git diff --staged --quiet; then
             git commit -m "build: update docs"
-            git push origin gh-pages
+            git push
           else
             echo "No changes detected."
           fi
