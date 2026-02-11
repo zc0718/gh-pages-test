@@ -41,3 +41,21 @@ jobs:
 
           ssh-keygen -lf "$HOME/.ssh/id_ed25519"
 
+      - name: Setup Sphinx ${{ matrix.repo.name }}
+        run: |
+          sudo apt install -y doxygen graphviz
+          pip install numpy sphinx sphinx-intl sphinx-rtd-theme
+
+      - name: Clone and sync ${{ matrix.repo.name }}
+        run: |
+          git clone --depth=1 "${{ matrix.repo.url }}" cache-tmp
+          ls -la cache-tmp/docs/
+          mkdir -p documentations/${{ matrix.repo.name }}/doc
+          rsync -av -delete cache-tmp/docs/sphinx/ documentations/${{ matrix.repo.name }}/docs/sphinx
+          mv cache-tmp/metadata.json documentations/${{ matrix.repo.name }}/metadata.json
+          mv cache-tmp/docs/build.py documentations/${{ matrix.repo.name }}/docs/build.py
+          rm -rf cache-tmp
+
+          python documentations/${{ matrix.repo.name }}/docs/build.py
+
+          
