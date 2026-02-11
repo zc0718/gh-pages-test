@@ -1,0 +1,275 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4. Full demonstration of specific lib &mdash; fcpp 1.0.0 文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=1f3f84dc" />
+
+  
+    <link rel="shortcut icon" href="_static/ALL_logo.jpg"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=34088549"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=540d3cec"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="prev" title="3. Metadata Configuration" href="components/meta.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            fcpp
+              <img src="_static/OUT_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="components/cmake.html">1. CMakeList</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components/conan.html">2. Conanfile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components/meta.html">3. Metadata</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. User concern contents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">4.1. Theories or introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">4.2. Usage demonstration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">4.3. Applying results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">4.4. Algorithm benchmark from test frame</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">fcpp</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4. </span>Full demonstration of specific lib</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/export.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1><span class="section-number">4. </span><span class="target" id="full-demonstration-of-specific-lib">Full demonstration of specific lib</span><a class="headerlink" href="#id1" title="链接到此标题。"></a></h1>
+<p>Brief overview: the library <code class="code docutils literal notranslate"><span class="pre">fcpp</span></code> integrates segmentation algorithms for natural images.</p>
+<section id="id2">
+<h2><span class="section-number">4.1. </span><span class="target" id="theories-or-introduction">Theories or introduction</span><a class="headerlink" href="#id2" title="链接到此标题。"></a></h2>
+<p>Segmentation in <code class="code docutils literal notranslate"><span class="pre">fcpp</span></code> is an iterative image segmentation algorithm that separates foreground from background
+using user input (e.g., a bounding box). It models color distributions of foreground and background with Gaussian
+Mixture Models (GMMs), and formulates segmentation as an energy minimization problem on a graph. The algorithm
+alternates between estimating pixel labels via graph cuts and refining the GMM parameters, converging to an optimal
+segmentation.</p>
+<div class="math notranslate nohighlight" id="equation-energy-function">
+<span class="eqno">(4.1)<a class="headerlink" href="#equation-energy-function" title="链接到此公式"></a></span>\[E(\mathbf{L}) = \sum_p D_p(l_p) + \lambda \sum_{p,q \in \mathcal{N}} w_{p,q} \cdot \delta(l_p \neq l_q)\]</div>
+<p>The total energy is composed of the data term (pixel assignment cost) and the smoothness term (penalty for the
+difference in labels of adjacent pixels). The unary term <span class="math notranslate nohighlight">\(D_p(l_p) = -\log P(I_p | \Theta_{l_p})\)</span> describes
+The negative log-likelihood of the color <span class="math notranslate nohighlight">\(I_p\)</span> of pixel <span class="math notranslate nohighlight">\(p\)</span> under the foreground or background GMM
+model <span class="math notranslate nohighlight">\(\Theta_{l_p}\)</span>, while <span class="math notranslate nohighlight">\(w_{p, q}\)</span> is the edge weight between pixel <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(q\)</span>.</p>
+<p>This part is optional.</p>
+</section>
+<section id="id3">
+<h2><span class="section-number">4.2. </span><span class="target" id="usage-demonstration">Usage demonstration</span><a class="headerlink" href="#id3" title="链接到此标题。"></a></h2>
+<p>The segmentation function segments the input image x by automatically defining a bounding box with margins
+proportional to image size. It initializes foreground and background models, then runs inner grabCut with the
+rectangle mode for 5 iterations. The output mask is refined to distinguish foreground (True) from background (False),
+effectively extracting the main object while suppressing borders. Ideal for automated foreground extraction without
+user input.</p>
+<div class="literal-block-wrapper docutils container" id="segmentation-demo">
+<div class="code-block-caption"><span class="caption-number">Code 4.1 </span><span class="caption-text">segmentation demo</span><a class="headerlink" href="#segmentation-demo" title="链接到此段代码"></a></div>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fcpp/seg.hpp&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fcpp/viz.hpp&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cv</span><span class="o">::</span><span class="n">Mat</span><span class="w"> </span><span class="n">img</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cv</span><span class="o">::</span><span class="n">imread</span><span class="p">(</span><span class="s">&quot;input.jpg&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// read image</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">mask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fcpp</span><span class="o">::</span><span class="n">get_foreground_mask</span><span class="p">(</span><span class="n">img</span><span class="p">);</span><span class="w">  </span><span class="c1">// compute foreground object</span>
+<span class="w">    </span><span class="n">fcpp</span><span class="o">::</span><span class="n">imshow</span><span class="p">(</span><span class="s">&quot;Input vs. Segmented&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">img</span><span class="p">,</span><span class="w"> </span><span class="n">mask</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// downstream tasks...</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>Further explanation for your code block.</p>
+</section>
+<section id="id4">
+<h2><span class="section-number">4.3. </span><span class="target" id="applying-results">Applying results</span><a class="headerlink" href="#id4" title="链接到此标题。"></a></h2>
+<p>The following illustration takes pictures of doll, person, and chicken wing as input. The algorithm can automatically
+calculate the their contours and areas (as shown in <a class="reference internal" href="#images-segmentation"><span class="std std-numref">Figure 4.1</span></a>).</p>
+<figure class="align-center" id="images-segmentation">
+<a class="reference internal image-reference" href="_images/OUT_demo1.jpg"><img alt="_images/OUT_demo1.jpg" src="_images/OUT_demo1.jpg" width="600" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 4.1 </span><span class="caption-text">Image segmentation illustration</span><a class="headerlink" href="#images-segmentation" title="链接到此图片"></a></p>
+</figcaption>
+</figure>
+<p>With this segmentation algorithm, you can extract the main object with binding box in pictures. Like the
+<a class="reference internal" href="#food-segmentations"><span class="std std-numref">Figure 4.2</span></a> illustrated, the proper binding boxes can extract the
+main food objects, which step is helpful for downstream analysis.</p>
+<figure class="align-center" id="food-segmentations">
+<a class="reference internal image-reference" href="_images/OUT_demo2.jpg"><img alt="_images/OUT_demo2.jpg" src="_images/OUT_demo2.jpg" width="550" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 4.2 </span><span class="caption-text">Get foods from original figure</span><a class="headerlink" href="#food-segmentations" title="链接到此图片"></a></p>
+</figcaption>
+</figure>
+<p>Or further combined with other image processing pipelines to obtain more complicated application such as background
+blur (fill the real implementation of <code class="code docutils literal notranslate"><span class="pre">//</span> <span class="pre">downstream</span> <span class="pre">tasks</span></code> in <a class="reference internal" href="#background-blur"><span class="std std-numref">Figure 4.3</span></a>), showed
+in <a class="reference internal" href="#background-blur"><span class="std std-numref">Figure 4.3</span></a>.</p>
+<figure class="align-center" id="background-blur">
+<a class="reference internal image-reference" href="_images/OUT_demo3.jpg"><img alt="_images/OUT_demo3.jpg" src="_images/OUT_demo3.jpg" width="500" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 4.3 </span><span class="caption-text">Background blur via segmentation algorithm</span><a class="headerlink" href="#background-blur" title="链接到此图片"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="id5">
+<h2><span class="section-number">4.4. </span><span class="target" id="algorithm-benchmark-from-test-frame">Algorithm benchmark from test frame</span><a class="headerlink" href="#id5" title="链接到此标题。"></a></h2>
+<p>The following table displays our testing matrix. As-checked platforms both in fields of <strong>unit</strong> and <strong>stress</strong>, are
+ideal choices if necessary.</p>
+<table class="docutils align-center" id="test-results">
+<caption><span class="caption-number">表 4.1 </span><span class="caption-text">test result among platforms</span><a class="headerlink" href="#test-results" title="链接到此表格。"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>architecture</p></th>
+<th class="head"><p>OS</p></th>
+<th class="head"><p>CPU</p></th>
+<th class="head"><p>unit total</p></th>
+<th class="head"><p>stress total</p></th>
+<th class="head"><p>score</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>x86_64</p></td>
+<td><p>Windows</p></td>
+<td><p>Core-i7 13gen</p></td>
+<td><p>14822ms</p></td>
+<td><p>173297ms</p></td>
+<td><p>A</p></td>
+</tr>
+<tr class="row-odd"><td><p>x86_64</p></td>
+<td><p>Linux</p></td>
+<td><p>AMD Ryzen 7</p></td>
+<td><p>13823ms</p></td>
+<td><p>154512ms</p></td>
+<td><p>A+</p></td>
+</tr>
+<tr class="row-even"><td><p>arm</p></td>
+<td><p>Linux</p></td>
+<td><p>cortex-m3</p></td>
+<td><p>failed</p></td>
+<td><p>failed</p></td>
+<td><p>D</p></td>
+</tr>
+<tr class="row-odd"><td><p>arm</p></td>
+<td><p>Linux</p></td>
+<td><p>cortex-a53</p></td>
+<td><p>25392ms</p></td>
+<td><p>254129ms</p></td>
+<td><p>B</p></td>
+</tr>
+<tr class="row-even"><td><p>arm</p></td>
+<td><p>Linux</p></td>
+<td><p>cortex-a53(4)</p></td>
+<td><p>20365ms</p></td>
+<td><p>233820ms</p></td>
+<td><p>B+</p></td>
+</tr>
+<tr class="row-odd"><td><p>arm</p></td>
+<td><p>Linux</p></td>
+<td><p>cortex-a76(4)</p></td>
+<td><p>16928ms</p></td>
+<td><p>198923ms</p></td>
+<td><p>A</p></td>
+</tr>
+<tr class="row-even"><td><p>...</p></td>
+<td><p>...</p></td>
+<td><p>...</p></td>
+<td><p>...</p></td>
+<td><p>...</p></td>
+<td><p>...</p></td>
+</tr>
+<tr class="row-odd"><td><p>risc-v</p></td>
+<td><p>Linux</p></td>
+<td><p>SiFive U74</p></td>
+<td><p>35329ms</p></td>
+<td><p>735723ms</p></td>
+<td><p>C</p></td>
+</tr>
+<tr class="row-even"><td><p>risc-v</p></td>
+<td><p>Linux</p></td>
+<td><p>Allwinner D1</p></td>
+<td><p>38234ms</p></td>
+<td><p>825231ms</p></td>
+<td><p>C-</p></td>
+</tr>
+</tbody>
+</table>
+<p>The platforms with B+ or greater scores in <a class="reference internal" href="#test-results"><span class="std std-numref">Table 4.1</span></a> are suggested to run this algorithms.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="components/meta.html" class="btn btn-neutral float-left" title="3. Metadata Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, HeT-FTI。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,190 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fcpp Project Documentation &mdash; fcpp 1.0.0 文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=1f3f84dc" />
+
+  
+    <link rel="shortcut icon" href="_static/ALL_logo.jpg"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=34088549"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=540d3cec"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="1. CMakeLists Configuration" href="components/cmake.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            fcpp
+              <img src="_static/OUT_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="components/cmake.html">1. CMakeList</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components/conan.html">2. Conanfile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components/meta.html">3. Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="export.html">4. User concern contents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">fcpp</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">fcpp Project Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1><span class="target" id="fcpp-project-documentation">fcpp Project Documentation</span><a class="headerlink" href="#id1" title="链接到此标题。"></a></h1>
+<section id="id2">
+<h2><span class="target" id="introduction">Introduction</span><a class="headerlink" href="#id2" title="链接到此标题。"></a></h2>
+<p>先进的构建系统、依赖项管理以及模块化开发支持。</p>
+</section>
+<section id="id3">
+<h2><span class="target" id="main-features">Main Features</span><a class="headerlink" href="#id3" title="链接到此标题。"></a></h2>
+<ul class="simple">
+<li><p>Support for mixed C and C++ programming</p></li>
+<li><p>Built-in C++20 module support</p></li>
+<li><p>Conan-based dependency management</p></li>
+<li><p>Cross-platform build support (Windows/Linux/macOS)</p></li>
+<li><p>Automated code generation and processing</p></li>
+<li><p>Intelligent header and module conversion</p></li>
+</ul>
+</section>
+<section id="id4">
+<h2><span class="target" id="quick-start">Quick Start</span><a class="headerlink" href="#id4" title="链接到此标题。"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install dependencies</span>
+conan<span class="w"> </span>install<span class="w"> </span>.
+
+<span class="c1"># Build the project</span>
+conan<span class="w"> </span>build<span class="w"> </span>.
+
+<span class="c1"># Create the package</span>
+conan<span class="w"> </span>create<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2><span class="target" id="project-structure">Project Structure</span><a class="headerlink" href="#id5" title="链接到此标题。"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fcpp/
+├── include/         # Header files
+├── src/             # Source files
+├── CMakeLists.txt   # CMake build configuration
+├── conanfile.py     # Conan package configuration
+├── metadata.json    # Project metadata
+└── LICENSE          # License file
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2><span class="target" id="detailed-settings">Detailed Settings</span><a class="headerlink" href="#id6" title="链接到此标题。"></a></h2>
+<p>For detailed settings in project-level meta, conan recipe, or cmake file, see:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="components/cmake.html">1. CMakeList</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="components/cmake.html#id2">1.1. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="components/cmake.html#id3">1.2. Key Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="components/cmake.html#id4">1.3. Main Configurations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="components/conan.html">2. Conanfile</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="components/conan.html#id2">2.1. Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="components/conan.html#id3">2.2. Main Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="components/conan.html#id4">2.3. Core Functionality</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="components/meta.html">3. Metadata</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="components/meta.html#id2">3.1. Project-level Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="components/meta.html#id3">3.2. File Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="components/meta.html#id4">3.3. Key Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="export.html">4. User concern contents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="export.html#id2">4.1. Theories or introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="export.html#id3">4.2. Usage demonstration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="export.html#id4">4.3. Applying results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="export.html#id5">4.4. Algorithm benchmark from test frame</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="id7">
+<h2><span class="target" id="license">License</span><a class="headerlink" href="#id7" title="链接到此标题。"></a></h2>
+<p>This project is licensed under the Apache-2.0 License. See the LICENSE file for details.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="components/cmake.html" class="btn btn-neutral float-right" title="1. CMakeLists Configuration" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, HeT-FTI。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
