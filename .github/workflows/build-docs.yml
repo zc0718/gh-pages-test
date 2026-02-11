@@ -15,14 +15,15 @@ jobs:
       contents: write
 
     strategy:
-      matrix: ${{ fromJson(inputs.matrix.repo.name) }}
+      matrix: ${{ fromJson(inputs.matrix) }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup SSH for ${{ matrix.repo.name }}
-        run: | 
+        run: |
+          echo "${{ secrets[format('SYNC_SPHINX_{0}', upper(matrix.repo.name))] }}"
           echo "${{ matrix.repo.name }}"
           echo "${{ matrix.repo.url }}"
 
