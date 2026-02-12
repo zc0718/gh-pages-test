@@ -29,17 +29,12 @@ jobs:
         run: |
           UPPER_NAME=$(echo "$REPO_NAME" | tr '[:lower:]' '[:upper:]')
           SECRET_KEY="SYNC_SPHINX_$UPPER_NAME"
-          echo "${{ matrix.repo.name }}"
-          echo "${{ matrix.repo.url }}"
-          echo "Looking for secret: $SECRET_KEY"
 
           PRIVATE_KEY=$(echo "$ALL_SECRETS_JSON" | jq -r ".[\"$SECRET_KEY\"]")
           mkdir -p "$HOME/.ssh"
           echo "$PRIVATE_KEY" > "$HOME/.ssh/id_ed25519"
           chmod 600 "$HOME/.ssh/id_ed25519"
           ssh-keyscan github.com >> "$HOME/.ssh/known_hosts"
-
-          ssh-keygen -lf "$HOME/.ssh/id_ed25519"
 
       - name: Setup Sphinx ${{ matrix.repo.name }}
         run: |
@@ -49,17 +44,16 @@ jobs:
       - name: Clone and sync ${{ matrix.repo.name }}
         run: |
           git clone --depth=1 "${{ matrix.repo.url }}" cache-tmp
-          ls -la cache-tmp/docs/
           mkdir -p documents/${{ matrix.repo.name }}/docs
           mkdir -p documents/${{ matrix.repo.name }}/docs/doxygen/images
-          rsync -av -delete cache-tmp/docs/sphinx/ documents/${{ matrix.repo.name }}/docs/sphinx
-          rsync -av -delete cache-tmp/docs/images/ documents/${{ matrix.repo.name }}/docs/images
+          rsync -av --delete cache-tmp/docs/sphinx/ documents/${{ matrix.repo.name }}/docs/sphinx
+          rsync -av --delete cache-tmp/docs/images/ documents/${{ matrix.repo.name }}/docs/images
           mv cache-tmp/metadata.json documents/${{ matrix.repo.name }}/metadata.json
           mv cache-tmp/docs/build.py documents/${{ matrix.repo.name }}/docs/build.py
           mv cache-tmp/Doxyfile documents/${{ matrix.repo.name }}/Doxyfile
-          rm -rf cache-tmp
-
-          python documents/${{ matrix.repo.name }}/docs/build.py
+          rm -rf cache-tmp || true
+          
+          python documents/${{ matrix.repo.name }}/docs/build.py  # let doxygen export empty
 
       - name: Upload built docs artifact
         uses: actions/upload-artifact@v4
@@ -84,26 +78,6 @@ jobs:
           path: documents
           merge-multiple: false
 
-      - name:  check file types Debug
-        run: |
-          echo "=== Listing documents/ ==="
-          ls -la documents/
-
-          echo ""
-          echo "=== Checking type of each item ==="
-          for item in documents/*; do
-            echo "$item:"
-            if [ -d "$item" ]; then
-              echo "  → Directory"
-              ls -la "$item" | head -n 3
-            elif [ -f "$item" ]; then
-              echo "  → File, type: $(file "$item")"
-            else
-              echo "  → Unknown"
-            fi
-            echo ""
-          done
-
       - name: Create final docs directory
         run: |
           mkdir -p docs
@@ -114,26 +88,21 @@ jobs:
             cp -r "$repo_html_dir" "docs/$repo_name"
           done
 
-      - name: Add nojekyll
+      - name: Prevent Jekyll processing
         run: |
           touch docs/.nojekyll
-
-      - name: check static dir
-        run: |
-          echo "Checking test1/_static:"
-          ls -la docs/test1/_static/
-          echo ""
-          echo "Checking test2/_static:"
-          ls -la docs/test2/_static/ 
 
       - name: Generate main index.html
         run: |
           cat > docs/index.html <<'EOF'
           <!DOCTYPE html>
           <html>
-          <head><title>Documentation Hub</title></head>
+          <head>
+            <meta charset="UTF-8">
+            <title>Documentation Hub</title>
+          </head>
           <body>
-            <h1>Project Documentation</h1>
+            <h1>AI Application Gallery</h1>
             <ul>
           EOF
 
@@ -148,18 +117,13 @@ jobs:
           </html>
           EOF
 
-      - name: Verify final structure
-        run: |
-          echo "Final docs structure:"
-          find docs -type f | sort
-
-      - name: Commit and push to gh-pages
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/
           if ! git diff --staged --quiet; then
-            git commit -m "build: update docs"
+            git commit -m "build: update documents hub"
             git push
           else
             echo "No changes detected."
