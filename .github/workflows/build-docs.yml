@@ -80,6 +80,7 @@ jobs:
 
       - name: Create final docs directory
         run: |
+          rm -rf docs
           mkdir -p docs
           for repo_html_dir in documents/*/; do
             if [ ! -d "$repo_html_dir" ]; then continue; fi
